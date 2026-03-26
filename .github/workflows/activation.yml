@@ -1,16 +1,15 @@
-name: Lisans Dosyasi Uret
-on:
-  workflow_dispatch: {}
+name: Unity Build
+
+on: [push]
+
 jobs:
-  activation:
-    name: Request manual activation file 🔑
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Ajan Lisans Dosyasini Cekiyor
-        id: getManualLicenseFile
-        uses: game-ci/unity-request-activation-file@v2
-      - name: Dosyayi Indirilebilir Yap
-        uses: actions/upload-artifact@v4
-        with:
-          name: Unity_v20XX.X.XXXX.alf
-          path: ${{ steps.getManualLicenseFile.outputs.filePath }}
+      - uses: actions/checkout@v3
+
+      - name: Build project
+        uses: game-ci/unity-builder@v3
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
