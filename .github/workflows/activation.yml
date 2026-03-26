@@ -1,15 +1,28 @@
 name: Unity Build
 
-on: [push]
+on:
+  push:
+    branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v3
+    env:
+      UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
-      - name: Build project
-        uses: game-ci/unity-builder@v3
-        env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cache Library
+        uses: actions/cache@v3
+        with:
+          path: Library
+          key: Library-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+
+      - name: Build Project
+        uses: game-ci/unity-builder@v4
+        with:
+          targetPlatform: StandaloneWindows64
